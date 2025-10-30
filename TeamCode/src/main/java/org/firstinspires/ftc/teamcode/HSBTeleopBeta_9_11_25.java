@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -39,7 +38,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
 
     // Actually create that variables for the 4 main drive motors, and create a stored runtime variable for later display
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     //Set to null in order to make it present error if not set.
     private DcMotor frontLeftDrive = null;
     private DcMotor backLeftDrive = null;
@@ -49,7 +48,7 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //The following initalizes the formerly created variables, but I need to get the actual names of the motors as they were initalized by the robot
+        //The following initializes the formerly created variables, but I need to get the actual names of the motors as they were initialized by the robot
         frontLeftDrive = hardwareMap.get(DcMotor.class, "TLD");
         backLeftDrive = hardwareMap.get(DcMotor.class, "BLD");
         frontRightDrive = hardwareMap.get(DcMotor.class, "TRD");
@@ -61,7 +60,7 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        //Uses the robot's telemetery system to get when the program is started by the driver/other user
+        //Uses the robot's telemetry system to get when the program is started by the driver/other user
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -70,8 +69,6 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
 
         //This function just means that the while loop runs until the stop button is hit
         while (opModeIsActive()) {
-            //Sets up max for later use in the code
-            double max;
             //Uses the left joystick to create a forward movement on the y-axis(forward variable) and a strafe effect on the x-axis(lateral)
             //Uses the right joystick to be able to rotate and turn(rotational)
             double forward   = -gamepad1.left_stick_y; 
@@ -119,22 +116,6 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
                     backRightPower = -maxPowerOutput;
                 }
             }
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            frontLeftPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            backLeftPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            frontRightPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            backRightPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
             // Send calculated power to wheels
             if (Math.abs(frontLeftPower) > 0) {
                 if (frontLeftPower < 0) {
@@ -167,9 +148,7 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
             telemetry.addData("BackLeftPower", String.valueOf(backLeftPower));
             telemetry.addData("FrontRightPower", String.valueOf(frontRightPower));
             telemetry.addData("BackRightPower", String.valueOf(backRightPower));
-            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            
+
             telemetry.update();
         }
     }}

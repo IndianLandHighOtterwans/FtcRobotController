@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
@@ -44,6 +45,9 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
+    private DcMotor input = null;
+    private DcMotor output = null;
+
 
     @Override
     public void runOpMode() {
@@ -53,12 +57,16 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "BLD");
         frontRightDrive = hardwareMap.get(DcMotor.class, "TRD");
         backRightDrive = hardwareMap.get(DcMotor.class, "BRD");
+        input = hardwareMap.get(DcMotor.class, "IN");
+        output = hardwareMap.get(DcMotor.class, "OT");
 
         //Test motors to make sure stuff works
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        input.setDirection(DcMotor.Direction.REVERSE);
+        output.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Uses the robot's telemetry system to get when the program is started by the driver/other user
         telemetry.addData("Status", "Initialized");
@@ -69,6 +77,9 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
 
         //This function just means that the while loop runs until the stop button is hit
         while (opModeIsActive()) {
+            //Enables Input and Output
+            input.setPower(gamepad1.left_bumper ? 1.0: 0.0);
+            output.setPower(gamepad1.right_bumper ? 1.0: 0.0);
             //Uses the left joystick to create a forward movement on the y-axis(forward variable) and a strafe effect on the x-axis(lateral)
             //Uses the right joystick to be able to rotate and turn(rotational)
             double forward   = -gamepad1.left_stick_y; 
@@ -82,7 +93,7 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
             double backRightPower  = forward + lateral - rotational;
             //This is the max power given to every wheel, sets speed
             
-            //The following code uses the 
+            //The following code uses the maxPowerOutput in order to cap motor power at 75%
             double maxPowerOutput = 0.75;
             if (Math.abs(frontLeftPower) > maxPowerOutput) {
                 if (frontLeftPower > maxPowerOutput) {
@@ -117,6 +128,7 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
                 }
             }
             // Send calculated power to wheels
+            //Zeros are here to ensure that there is a clean break when we actually stop
             if (Math.abs(frontLeftPower) > 0) {
                 if (frontLeftPower < 0) {
                     frontLeftDrive.setPower(frontLeftPower);

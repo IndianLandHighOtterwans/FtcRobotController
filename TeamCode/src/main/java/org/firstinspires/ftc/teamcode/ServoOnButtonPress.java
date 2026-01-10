@@ -29,22 +29,34 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2021 FIRST. All rights r
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="MotorInfTest", group="Linear OpMode")
-public class MotorForever extends LinearOpMode{
+@TeleOp(name="ServoOnButtonPress", group="Linear OpMode")
+public class ServoOnButtonPress extends LinearOpMode{
     
-    private DcMotor testMotor = null;
-
+    private Servo testServo = null;
+    private Servo testServo2 = null;
+    private double servoAngle = 0.0;
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
         waitForStart();
-        //Currently back left drive
-        //Make sure to change this to the motor they hook up for the input
-        testMotor = hardwareMap.get(DcMotor.class, "IN");
-        testMotor.setDirection(DcMotor.Direction.REVERSE);
+        //Make sure to change name of variables once stuff is done
+        testServo = hardwareMap.get(Servo.class, "LS");
+        testServo2 = hardwareMap.get(Servo.class, "RS");
+
         while (opModeIsActive()){
-            testMotor.setPower(1.0);
+            while (gamepad1.dpad_up && servoAngle < 1.0) {
+                servoAngle = servoAngle + 0.1;
+                testServo.setPosition(servoAngle);
+                testServo2.setPosition(servoAngle);
+                wait(1);
+            }
+            while (gamepad1.dpad_down && servoAngle > 0.0) {
+                servoAngle = servoAngle - 0.1;
+                testServo.setPosition(servoAngle);
+                testServo2.setPosition(servoAngle);
+                wait(1);
+            }
         }
     }
 }

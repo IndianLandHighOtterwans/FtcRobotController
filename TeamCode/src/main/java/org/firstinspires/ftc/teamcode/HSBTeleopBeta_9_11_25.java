@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@TeleOp(name="Finished Untested TeleOP", group="Linear OpMode")
 public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
 
     // Actually create that variables for the 4 main drive motors, and create a stored runtime variable for later display
@@ -48,7 +48,15 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
     private DcMotor input = null;
     private DcMotor output = null;
 
-
+    public void saveMeJasminPrince() {
+        input.setTargetPosition(3);
+        input.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        input.setPower(0.75);
+        while (input.isBusy()) {}
+        input.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (input.isBusy()) {}
+        input.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     @Override
     public void runOpMode() {
 
@@ -66,7 +74,8 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         input.setDirection(DcMotor.Direction.REVERSE);
-        output.setDirection(DcMotorSimple.Direction.FORWARD);
+        output.setDirection(DcMotor.Direction.FORWARD);
+
 
         //Uses the robot's telemetry system to get when the program is started by the driver/other user
         telemetry.addData("Status", "Initialized");
@@ -78,8 +87,22 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
         //This function just means that the while loop runs until the stop button is hit
         while (opModeIsActive()) {
             //Enables Input and Output
-            input.setPower(gamepad1.left_bumper ? 1.0: 0.0);
-            output.setPower(gamepad1.right_bumper ? 1.0: 0.0);
+            if (gamepad1.leftBumperWasPressed()) {
+                input.setPower(1);
+            }
+            if (gamepad1.leftBumperWasReleased()) {
+                input.setPower(0);
+            }
+            if (gamepad1.rightBumperWasPressed()) {
+                output.setPower(1);
+            }
+            if (gamepad1.rightBumperWasReleased()) {
+                output.setPower(0);
+            }
+            //Enables Second Input
+            if (gamepad1.yWasPressed() && gamepad1.yWasReleased()) {
+                saveMeJasminPrince();
+            }
             //Uses the left joystick to create a forward movement on the y-axis(forward variable) and a strafe effect on the x-axis(lateral)
             //Uses the right joystick to be able to rotate and turn(rotational)
             double forward   = -gamepad1.left_stick_y; 
@@ -95,6 +118,12 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
             
             //The following code uses the maxPowerOutput in order to cap motor power at 75%
             double maxPowerOutput = 0.75;
+            if (maxPowerOutput < 0.75 && gamepad1.aWasPressed()) {
+                maxPowerOutput = maxPowerOutput + 0.05;
+            }
+            else if (maxPowerOutput > 0.00 && gamepad1.bWasPressed()) {
+                maxPowerOutput = maxPowerOutput - 0.05;
+            }
             if (Math.abs(frontLeftPower) > maxPowerOutput) {
                 if (frontLeftPower > maxPowerOutput) {
                     frontLeftPower = maxPowerOutput;
@@ -160,7 +189,7 @@ public class HSBTeleopBeta_9_11_25 extends LinearOpMode {
             telemetry.addData("BackLeftPower", String.valueOf(backLeftPower));
             telemetry.addData("FrontRightPower", String.valueOf(frontRightPower));
             telemetry.addData("BackRightPower", String.valueOf(backRightPower));
-
+            telemetry.addData("Max Power", String.valueOf(maxPowerOutput));
             telemetry.update();
         }
     }}
